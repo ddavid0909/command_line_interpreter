@@ -25,15 +25,6 @@ object InputManager {
             this.input = validator.check(this.input)
         }
 
-        CommandRegistry.registerCommand("echo", {EchoCommand()})
-        CommandRegistry.registerCommand("date", {DateCommand()})
-        CommandRegistry.registerCommand("time", {TimeCommand()})
-        CommandRegistry.registerCommand("prompt", {PromptCommand()})
-        CommandRegistry.registerCommand("touch", {TouchCommand()})
-        CommandRegistry.registerCommand("truncate", {TruncateCommand()})
-        CommandRegistry.registerCommand("rm", {RemoveCommand()})
-        CommandRegistry.registerCommand("wc", {WordCountCommand()})
-
         val lexer = Lexer(this.input)
         val tokens = lexer.tokenize()
         //lexer.printList()

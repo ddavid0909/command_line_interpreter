@@ -14,7 +14,7 @@ import lexer.Token
  *
  */
 class Parser(private val tokens:List<Token>) {
-    private val commandLists = mutableListOf<List<Token>>()
+    private val commandLists = mutableListOf<MutableList<Token>>()
 
     fun parse() : Command {
         var newList = mutableListOf<Token>()

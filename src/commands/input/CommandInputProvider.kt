@@ -1,14 +1,14 @@
 package commands.input
 
 import exceptions.FatalError
-import exceptions.syntax.MultipleInputException
-import parser.*
+import parser.Terminal
+import parser.InputTerminal
+import parser.LiteralTerminal
 
 object CommandInputProvider {
-    fun provide(terminals : List<Terminal>) : CommandInput {
-        if (terminals.size > 1) throw MultipleInputException()
-        if (terminals.isEmpty()) return StandardCommandInput()
-        return when(val terminal = terminals[0]) {
+    fun provide(terminal : Terminal?) : CommandInput {
+        terminal ?: return StandardCommandInput()
+        return when(terminal) {
             is InputTerminal -> FileCommandInput(terminal.value)
             is LiteralTerminal -> QuotedCommandInput(terminal.value)
             else -> throw FatalError()

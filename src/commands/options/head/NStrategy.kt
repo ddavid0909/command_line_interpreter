@@ -6,7 +6,8 @@ class NStrategy : Strategy() {
         TODO("Not yet implemented")
     }
 
-    fun setN(N: Int) {
-       this.n = N
+    override fun set(input: String) {
+
+        this.n = 0
     }
 }

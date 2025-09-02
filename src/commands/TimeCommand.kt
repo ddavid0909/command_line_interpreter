@@ -1,12 +1,10 @@
 package commands
 
 import commands.output.CommandOutputProvider
-import exceptions.syntax.PresentInputException
-import exceptions.syntax.PresentNonQuotedException
-import exceptions.syntax.PresentOptionException
-import exceptions.syntax.PresentQuotedException
+import exceptions.syntax.*
 import lexer.*
 import parser.AppendOutputTerminal
+import parser.OutputTerminal
 import parser.Terminal
 import java.time.LocalTime
 
@@ -16,20 +14,20 @@ class TimeCommand : Command() {
     }
 
     override fun parseInput(input: List<Token>) {
-        val terminals = mutableListOf<Terminal>()
+        var _output : Terminal? = null
 
         for (token in input) {
             when (token) {
-                is AppendOutputToken -> terminals.add(AppendOutputTerminal(token.value))
+                is AppendOutputToken -> _output = if (_output == null) AppendOutputTerminal(token.value) else throw MultipleOutputException()
                 is CommandToken -> continue
                 is InputToken -> throw PresentInputException()
                 is NonQuotedToken -> throw PresentNonQuotedException()
                 is OptionToken -> throw PresentOptionException()
-                is OutputToken -> terminals.add(AppendOutputTerminal(token.value))
+                is OutputToken -> _output = if (_output == null) OutputTerminal(token.value) else throw MultipleOutputException()
                 is PipelineToken -> continue
                 is QuotedToken -> throw PresentQuotedException()
             }
         }
-        this.commandOutput = CommandOutputProvider.provide(terminals)
+        this.commandOutput = CommandOutputProvider.provide(_output)
     }
 }

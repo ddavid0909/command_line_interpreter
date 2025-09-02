@@ -1,10 +1,7 @@
 package commands
 
 import commands.input.CommandInputProvider
-import exceptions.syntax.PresentInputException
-import exceptions.syntax.PresentOptionException
-import exceptions.syntax.PresentOutputException
-import exceptions.syntax.PresentQuotedException
+import exceptions.syntax.*
 import lexer.*
 import parser.LiteralTerminal
 import parser.Terminal
@@ -17,14 +14,14 @@ class TruncateCommand : Command(){
     }
 
     override fun parseInput(input: List<Token>) {
-        val terminals = mutableListOf<Terminal>()
+        var _input : Terminal? = null
 
         for (token in input) {
             when(token) {
                 is AppendOutputToken -> throw PresentOutputException()
                 is CommandToken -> continue
                 is InputToken -> throw PresentInputException()
-                is NonQuotedToken -> terminals.add(LiteralTerminal(token.value))
+                is NonQuotedToken -> _input = if (_input == null) LiteralTerminal(token.value) else throw MultipleInputException()
                 is OptionToken -> throw PresentOptionException()
                 is OutputToken -> throw PresentOutputException()
                 is PipelineToken -> continue
@@ -32,6 +29,6 @@ class TruncateCommand : Command(){
             }
         }
 
-        this.commandInput = CommandInputProvider.provide(terminals)
+        this.commandInput = CommandInputProvider.provide(_input)
     }
 }

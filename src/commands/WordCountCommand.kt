@@ -5,9 +5,7 @@ import commands.output.CommandOutputProvider
 import commands.options.word_count.CStrategy
 import commands.options.word_count.WStrategy
 import commands.options.word_count.Strategy
-import exceptions.syntax.MultipleOptionException
-import exceptions.syntax.NoOptionTokenException
-import exceptions.syntax.NonExistentOptionException
+import exceptions.syntax.*
 import lexer.*
 import parser.*
 
@@ -24,23 +22,24 @@ class WordCountCommand : Command() {
     }
 
     override fun parseInput(input: List<Token>) {
-        val terminals = mutableListOf<Terminal>()
+        var _input : Terminal? = null
+        var _output : Terminal? = null
 
         for (token in input) {
             when(token) {
-                is AppendOutputToken -> terminals.add(AppendOutputTerminal(token.value))
+                is AppendOutputToken -> _output = if(_output == null) AppendOutputTerminal(token.value) else throw MultipleOutputException()
                 is CommandToken -> continue
-                is InputToken -> terminals.add(InputTerminal(token.value))
-                is NonQuotedToken -> terminals.add(InputTerminal(token.value))
+                is InputToken -> _input = if (_input == null) InputTerminal(token.value) else throw MultipleInputException()
+                is NonQuotedToken -> _input = if (_input == null) InputTerminal(token.value) else throw MultipleInputException()
                 is OptionToken -> this.option = if (this.option == null) token.value else throw MultipleOptionException()
-                is OutputToken -> terminals.add(OutputTerminal(token.value))
+                is OutputToken -> _output = if (_output == null) OutputTerminal(token.value) else throw MultipleOutputException()
                 is PipelineToken -> continue
-                is QuotedToken -> terminals.add(LiteralTerminal(token.value))
+                is QuotedToken -> _input = if (_input == null) LiteralTerminal(token.value) else throw MultipleInputException()
             }
         }
 
-        this.commandInput = CommandInputProvider.provide(terminals.filter {it is LiteralTerminal || it is InputTerminal})
-        this.commandOutput = CommandOutputProvider.provide(terminals.filter {it is OutputTerminal || it is AppendOutputTerminal})
+        this.commandInput = CommandInputProvider.provide(_input)
+        this.commandOutput = CommandOutputProvider.provide(_output)
 
     }
 }

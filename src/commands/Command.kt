@@ -11,4 +11,6 @@ abstract class Command {
     var commandInput : CommandInput = StandardCommandInput()
     abstract fun invoke()
     abstract fun parseInput(input: List<Token>)
+
+
 }

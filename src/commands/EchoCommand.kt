@@ -14,21 +14,22 @@ class EchoCommand : Command() {
     }
 
     override fun parseInput(input: List<Token>) {
-        val terminals: MutableList<Terminal> = mutableListOf()
+        var _input : Terminal? = null
+        var _output : Terminal? = null
 
         for (token in input) {
             when (token) {
-                is AppendOutputToken -> terminals.add(AppendOutputTerminal(token.value))
+                is AppendOutputToken -> _output = if (_output == null) AppendOutputTerminal(token.value) else throw MultipleOutputException()
                 is CommandToken -> continue
-                is InputToken -> terminals.add(InputTerminal(token.value))
-                is NonQuotedToken -> terminals.add(InputTerminal(token.value))
+                is InputToken -> _input = if (_input == null) InputTerminal(token.value) else throw MultipleInputException()
+                is NonQuotedToken -> _input = if (_input == null) InputTerminal(token.value) else throw MultipleInputException()
                 is OptionToken -> throw PresentOptionException()
-                is OutputToken -> terminals.add(OutputTerminal(token.value))
+                is OutputToken -> _output = if (_output == null) OutputTerminal(token.value) else throw MultipleOutputException()
                 is PipelineToken -> continue
-                is QuotedToken -> terminals.add(LiteralTerminal(token.value))
+                is QuotedToken -> _input = if (_input == null) LiteralTerminal(token.value) else throw MultipleInputException()
             }
         }
-        this.commandInput = CommandInputProvider.provide(terminals.filter { it is InputTerminal || it is LiteralTerminal })
-        this.commandOutput = CommandOutputProvider.provide(terminals.filter { it is OutputTerminal || it is AppendOutputTerminal })
+        this.commandInput = CommandInputProvider.provide(_input)
+        this.commandOutput = CommandOutputProvider.provide(_output)
     }
 }

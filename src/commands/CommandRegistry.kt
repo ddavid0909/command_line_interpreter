@@ -6,28 +6,33 @@ import lexer.Token
 object CommandRegistry {
     private val commands = mutableMapOf<String, ()->Command>()
 
+    init {
+        registerCommand("echo", {EchoCommand()})
+        registerCommand("date", {DateCommand()})
+        registerCommand("time", {TimeCommand()})
+        registerCommand("prompt", {PromptCommand()})
+        registerCommand("touch", {TouchCommand()})
+        registerCommand("truncate", {TruncateCommand()})
+        registerCommand("rm", {RemoveCommand()})
+        registerCommand("wc", {WordCountCommand()})
+    }
+
     fun registerCommand(name: String,  factory: () -> Command) {
         this.commands[name] = factory
     }
 
-    private fun getCommand(name: String) : Command {
+    fun getCommand(name: String) : Command {
         val returnValue = this.commands[name]
         returnValue ?: throw UnknownCommandException(name)
         return returnValue.invoke()
     }
 
-    fun buildCommand(commands: List<List<Token>>) : Command {
+    fun buildCommand(commands: MutableList<MutableList<Token>>) : Command {
         var command  = getCommand(commands[0][0].value)
         command.parseInput(commands[0])
-
         if (commands.size > 1) {
             command = PipelineCommand()
-            for (list in commands) {
-                val newCommand = getCommand(list[0].value)
-                // PipelineCommand must add temp input and output before passing occurs.
-                newCommand.parseInput(list)
-                command.add(newCommand)
-            }
+            command.set(commands)
         }
 
         return command

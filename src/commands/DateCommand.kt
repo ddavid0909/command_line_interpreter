@@ -12,20 +12,20 @@ class DateCommand : Command() {
     }
 
     override fun parseInput(input: List<Token>) {
-        val terminals: MutableList<Terminal> = mutableListOf()
+        var _output : Terminal? = null
 
         for (token in input) {
             when(token) {
-                is AppendOutputToken -> terminals.add(AppendOutputTerminal(token.value))
+                is AppendOutputToken -> _output = if (_output == null) AppendOutputTerminal(token.value) else throw MultipleOutputException()
                 is CommandToken -> continue
                 is InputToken -> throw PresentInputException()
                 is NonQuotedToken -> throw PresentNonQuotedException()
                 is OptionToken -> throw PresentOptionException()
-                is OutputToken -> terminals.add(OutputTerminal(token.value))
+                is OutputToken -> _output = if (_output == null) OutputTerminal(token.value) else throw MultipleOutputException()
                 is PipelineToken -> continue
                 is QuotedToken -> throw PresentQuotedException()
             }
         }
-        this.commandOutput = CommandOutputProvider.provide(terminals.filter { it is OutputTerminal || it is AppendOutputTerminal })
+        this.commandOutput = CommandOutputProvider.provide(_output)
     }
 }
