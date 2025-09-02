@@ -1,5 +1,6 @@
 package lexer
 
+import exceptions.tokens.CommandTokenException
 import exceptions.tokens.UnrecognizedTokenException
 
 /**
@@ -11,7 +12,6 @@ class Lexer(val input: String) {
     private val tokens = mutableListOf<Token>()
 
     fun tokenize() : List<Token> {
-
         while (this.pos < this.input.length) {
             if (this.input[this.pos].isWhitespace()) {
                 this.pos++
@@ -46,6 +46,8 @@ class Lexer(val input: String) {
                 throw UnrecognizedTokenException(this.input, this.pos)
             }
         }
+
+        if (this.commandTokenNext) throw CommandTokenException(this.input, this.input.length)
 
         return this.tokens
     }

@@ -2,7 +2,9 @@ package lexer
 
 import exceptions.tokens.*
 
-sealed class Token(val value: String)
+sealed class Token(val value: String) {
+    abstract fun getKind(): String
+}
 
 class CommandToken(value: String) : Token(value) {
     constructor(lexer: Lexer) : this(
@@ -17,6 +19,10 @@ class CommandToken(value: String) : Token(value) {
             }
         }
     )
+
+    override fun getKind(): String {
+        return "Command"
+    }
 }
 
 class QuotedToken(value: String) : Token(value) {
@@ -30,6 +36,10 @@ class QuotedToken(value: String) : Token(value) {
             lexer.pos++
         }
     )
+
+    override fun getKind(): String {
+        return "Quoted"
+    }
 }
 class InputToken(value: String) : Token(value) {
     constructor(lexer: Lexer) : this (
@@ -45,6 +55,10 @@ class InputToken(value: String) : Token(value) {
             }
         }
     )
+
+    override fun getKind(): String {
+        return "Input"
+    }
 }
 class OutputToken(value: String): Token(value) {
     constructor(lexer: Lexer) : this (
@@ -60,6 +74,10 @@ class OutputToken(value: String): Token(value) {
             }
         }
     )
+
+    override fun getKind(): String {
+        return "Output"
+    }
 }
 
 class AppendOutputToken(value:String): Token(value) {
@@ -76,10 +94,18 @@ class AppendOutputToken(value:String): Token(value) {
             }
         }
     )
+
+    override fun getKind(): String {
+        return "Append Output"
+    }
 }
 class PipelineToken(value: String) : Token(value) {
     constructor(lexer: Lexer) : this("|") {
         lexer.pos++;
+    }
+
+    override fun getKind(): String {
+        return "Pipeline"
     }
 }
 class OptionToken(value:String) : Token(value) {
@@ -88,7 +114,7 @@ class OptionToken(value:String) : Token(value) {
             lexer.pos++
             while(lexer.pos < lexer.input.length && !lexer.input[lexer.pos].isWhitespace()) {
                 val nextCharacter = lexer.input[lexer.pos]
-                if (!nextCharacter.isLetter()) {
+                if (!nextCharacter.isLetterOrDigit()) {
                     throw OptionTokenException(lexer.input, lexer.pos)
                 }
                 append(nextCharacter)
@@ -96,6 +122,10 @@ class OptionToken(value:String) : Token(value) {
             }
         }
     )
+
+    override fun getKind(): String {
+        return "Option"
+    }
 }
 
 class NonQuotedToken(value:String) : Token(value) {
@@ -104,12 +134,16 @@ class NonQuotedToken(value:String) : Token(value) {
             while (lexer.pos < lexer.input.length && !lexer.input[lexer.pos].isWhitespace()) {
                 val nextCharacter = lexer.input[lexer.pos]
                 if (!nextCharacter.isLetter() && nextCharacter != '.') {
-                    throw InputTokenException(lexer.input, lexer.pos)
+                    throw NonQuotedTokenException(lexer.input, lexer.pos)
                 }
                 append(nextCharacter)
                 lexer.pos++
             }
         }
     )
+
+    override fun getKind(): String {
+        return "NonQuoted"
+    }
 
 }

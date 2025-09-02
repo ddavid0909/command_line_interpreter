@@ -6,7 +6,7 @@ import lexer.OutputToken
 import lexer.Token
 import java.io.File
 
-class PipelineCommand() : Command(){
+class PipelineCommand : Command(){
     val commands : MutableList<Command> = mutableListOf()
     private fun add (command : Command) {
         this.commands.add(command)
@@ -33,8 +33,8 @@ class PipelineCommand() : Command(){
         val number = commands.size
         val tempFiles = mutableMapOf<Int, String>()
         this.recreateDirectory(".temp")
-        for (i in 0 until number) {
-            tempFiles.put(i, ".temp/temp_file_$i")
+        for (i in 0..<number) {
+            tempFiles[i] =  ".temp/temp_file_$i"
         }
         for ((i, list) in commands.withIndex()) {
             if (i != 0) {

@@ -1,0 +1,73 @@
+comm_and
+exceptions.tokens.CommandTokenException
+// Command can contain only letters
+
+command -op_t
+exceptions.tokens.OptionTokenException
+// Option can contain only letters and digits
+
+-opt
+exceptions.tokens.CommandTokenException
+// Command token must be first
+
+command -opt | -opt
+exceptions.tokens.CommandTokenException
+// Command token must be first after pipeline token
+
+||||||||
+exceptions.tokens.CommandTokenException
+// Command token must be first after pipeline token
+
+command |||||
+exceptions.tokens.CommandTokenException
+// Command token must be first after pipeline token
+
+command input_
+exceptions.tokens.NonQuotedTokenException
+// NonQuoted token can only contain letters
+
+command in123
+exceptions.tokens.NonQuotedTokenException
+// NonQuoted token can only contain letters
+
+com123
+exceptions.tokens.CommandTokenException
+// Command token can only contain letters
+
+command -opt /
+exceptions.tokens.UnrecognizedTokenException
+// Lexer fails to classify / as beginning of any type of token
+
+command -opt/
+exceptions.tokens.OptionTokenException
+// / is now at end of option token and option token cannot contain it. Contrast with example above
+
+command -opt -opt -opt | command | command input_txt
+exceptions.tokens.NonQuotedTokenException
+// NonQuoted exception can only contain letters
+
+command _opt
+exceptions.tokens.UnrecognizedTokenException
+// _ is at the start of the token and lexer cannot resolve it as any token.
+
+command >>appendInput.txt
+exceptions.tokens.InputTokenException
+// >> does not exist
+
+command <>error.txt
+exceptions.tokens.OutputTokenException
+// > cannot be part of output token
+
+command <<<error.txt
+exceptions.tokens.AppendOutputTokenException
+// <<< does not exist
+
+command -opt -opt | command |
+exceptions.tokens.CommandTokenException
+// missing command after last pipeline
+
+
+exceptions.tokens.CommandTokenException
+// missing command token in the expression
+
+
