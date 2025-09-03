@@ -1,10 +1,10 @@
 package commands.input
 
-class StandardCommandInput() : CommandInput() {
+class StandardCommandInput : CommandInput() {
     override fun getArgument(): String {
         val builder = StringBuilder()
         while (true) {
-            val line = readlnOrNull() ?:  return builder.toString()
+            val line = readlnOrNull() ?: return builder.toString()
             builder.append("$line \n")
         }
     }

@@ -1,7 +1,5 @@
 package commands
 
-
-import com.sun.jdi.connect.Connector.Argument
 import commands.input.CommandInputProvider
 import commands.options.head.NStrategy
 import commands.options.head.Strategy
@@ -11,32 +9,44 @@ import exceptions.syntax.MultipleOutputException
 import exceptions.syntax.NonExistentOptionException
 import exceptions.syntax.PresentQuotedException
 import lexer.*
-import parser.*
+import parser.AppendOutputTerminal
+import parser.InputTerminal
+import parser.OutputTerminal
+import parser.Terminal
 
 class HeadCommand : Command() {
     private val strategies = mutableMapOf<String, Strategy>("n" to NStrategy())
-    private var strategy : Strategy? = null
+    private var strategy: Strategy = NStrategy()
     override fun invoke() {
-        TODO("Not yet implemented")
+        val text: String = this.commandInput.getArgument()
+        this.commandOutput.output(this.strategy.output(text))
     }
 
     override fun parseInput(input: List<Token>) {
-        var _output : Terminal? = null
-        var _input : Terminal? = null
-        //var _option: Terminal? = null
+        var _output: Terminal? = null
+        var _input: Terminal? = null
 
         for (token in input) {
             when (token) {
-                is AppendOutputToken -> _output = if (_output == null) AppendOutputTerminal(token.value) else throw MultipleOutputException()
+                is AppendOutputToken -> _output =
+                    if (_output == null) AppendOutputTerminal(token.value) else throw MultipleOutputException()
+
                 is CommandToken -> continue
-                is InputToken -> _input = if( _input == null) InputTerminal(token.value) else throw MultipleInputException()
-                is NonQuotedToken -> _input = if(_input == null) InputTerminal(token.value) else throw MultipleInputException()
+                is InputToken -> _input =
+                    if (_input == null) InputTerminal(token.value) else throw MultipleInputException()
+
+                is NonQuotedToken -> _input =
+                    if (_input == null) InputTerminal(token.value) else throw MultipleInputException()
+
                 is OptionToken -> {
-                    val option = token.value.substring(0,1)
-                    this.strategy = this.strategies[option]
-                    this.strategy ?: throw NonExistentOptionException(option)
+                    val option = token.value.substring(0, 1)
+                    this.strategy = this.strategies[option] ?: throw NonExistentOptionException(option)
+                    this.strategy.set(token.value)
                 }
-                is OutputToken -> _output = if (_output == null) OutputTerminal(token.value) else throw MultipleOutputException()
+
+                is OutputToken -> _output =
+                    if (_output == null) OutputTerminal(token.value) else throw MultipleOutputException()
+
                 is PipelineToken -> continue
                 is QuotedToken -> throw PresentQuotedException()
             }

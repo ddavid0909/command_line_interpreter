@@ -1,7 +1,5 @@
 package input
 
-import commands.CommandRegistry
-import commands.*
 import input.validators.InputLengthValidator
 import input.validators.InputValidator
 import lexer.Lexer
@@ -27,12 +25,10 @@ object InputManager {
 
         val lexer = Lexer(this.input)
         val tokens = lexer.tokenize()
-        //lexer.printList()
 
         val parser = Parser(tokens)
         val command = parser.parse()
         command.invoke()
-       // print(parser.parse())
 
     }
 

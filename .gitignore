@@ -36,5 +36,4 @@ tests/
 *.iml
 .idea/
 
-input.txt
-output.txt
+*.txt

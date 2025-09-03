@@ -1,4 +1,4 @@
 # Basic Command Line Interpreter
 
-kotlinc src/**/*.kt -include-runtime -d src/MyProgram.jar <br>
-java -jar src/MyProgram.jar 
+kotlinc src/**/*.kt -include-runtime -d src/CLI.jar <br>
+java -jar src/CLI.jar 

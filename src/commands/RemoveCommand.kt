@@ -15,14 +15,16 @@ class RemoveCommand : Command() {
     }
 
     override fun parseInput(input: List<Token>) {
-        var input_ : Terminal? = null
+        var input_: Terminal? = null
 
         for (token in input) {
-            when(token) {
+            when (token) {
                 is AppendOutputToken -> throw PresentOutputException()
                 is CommandToken -> continue
                 is InputToken -> throw PresentInputException()
-                is NonQuotedToken -> input_ = if (input_ == null) LiteralTerminal(token.value) else throw MultipleInputException()
+                is NonQuotedToken -> input_ =
+                    if (input_ == null) LiteralTerminal(token.value) else throw MultipleInputException()
+
                 is OptionToken -> throw PresentOptionException()
                 is OutputToken -> throw PresentOutputException()
                 is PipelineToken -> continue

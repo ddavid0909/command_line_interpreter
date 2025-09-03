@@ -50,24 +50,14 @@ command _opt
 exceptions.tokens.UnrecognizedTokenException
 // _ is at the start of the token and lexer cannot resolve it as any token.
 
-command >>appendInput.txt
+command <<appendInput.txt
 exceptions.tokens.InputTokenException
-// >> does not exist
+// << does not exist
 
-command <>error.txt
+command ><error.txt
 exceptions.tokens.OutputTokenException
-// > cannot be part of output token
+// < cannot be part of output token
 
-command <<<error.txt
+command >>>error.txt
 exceptions.tokens.AppendOutputTokenException
 // <<< does not exist
-
-command -opt -opt | command |
-exceptions.tokens.CommandTokenException
-// missing command after last pipeline
-
-
-exceptions.tokens.CommandTokenException
-// missing command token in the expression
-
-

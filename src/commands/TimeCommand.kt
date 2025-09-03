@@ -14,16 +14,20 @@ class TimeCommand : Command() {
     }
 
     override fun parseInput(input: List<Token>) {
-        var _output : Terminal? = null
+        var _output: Terminal? = null
 
         for (token in input) {
             when (token) {
-                is AppendOutputToken -> _output = if (_output == null) AppendOutputTerminal(token.value) else throw MultipleOutputException()
+                is AppendOutputToken -> _output =
+                    if (_output == null) AppendOutputTerminal(token.value) else throw MultipleOutputException()
+
                 is CommandToken -> continue
                 is InputToken -> throw PresentInputException()
                 is NonQuotedToken -> throw PresentNonQuotedException()
                 is OptionToken -> throw PresentOptionException()
-                is OutputToken -> _output = if (_output == null) OutputTerminal(token.value) else throw MultipleOutputException()
+                is OutputToken -> _output =
+                    if (_output == null) OutputTerminal(token.value) else throw MultipleOutputException()
+
                 is PipelineToken -> continue
                 is QuotedToken -> throw PresentQuotedException()
             }

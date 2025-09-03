@@ -1,3 +1,3 @@
 package exceptions.syntax
 
-class PresentQuotedException: Exception("Quoted arguments should not exist for command")
+class PresentQuotedException : Exception("Quoted arguments should not exist for command")

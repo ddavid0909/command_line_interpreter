@@ -1,6 +1,6 @@
 package exceptions.tokens
 
-open class TokenException (
+open class TokenException(
     val input: String,
     private val pos: Int,
     message: String

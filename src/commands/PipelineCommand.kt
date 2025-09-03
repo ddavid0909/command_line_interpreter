@@ -6,9 +6,9 @@ import lexer.OutputToken
 import lexer.Token
 import java.io.File
 
-class PipelineCommand : Command(){
-    val commands : MutableList<Command> = mutableListOf()
-    private fun add (command : Command) {
+class PipelineCommand : Command() {
+    val commands: MutableList<Command> = mutableListOf()
+    private fun add(command: Command) {
         this.commands.add(command)
     }
 
@@ -17,8 +17,7 @@ class PipelineCommand : Command(){
             for (command in this.commands) {
                 command.invoke()
             }
-        }
-        catch (e: Exception) {
+        } catch (e: Exception) {
             throw Exception("(IN PIPELINE) ${e.message}")
         }
         val dir = File(".temp")
@@ -29,18 +28,18 @@ class PipelineCommand : Command(){
 
     override fun parseInput(input: List<Token>) {}
 
-    fun set(commands : List<MutableList<Token>>) {
+    fun set(commands: List<MutableList<Token>>) {
         val number = commands.size
         val tempFiles = mutableMapOf<Int, String>()
         this.recreateDirectory(".temp")
         for (i in 0..<number) {
-            tempFiles[i] =  ".temp/temp_file_$i"
+            tempFiles[i] = ".temp/temp_file_$i"
         }
         for ((i, list) in commands.withIndex()) {
             if (i != 0) {
-                list.add(InputToken(tempFiles[i-1] ?: throw FatalError()))
+                list.add(InputToken(tempFiles[i - 1] ?: throw FatalError()))
             }
-            if (i != number-1) {
+            if (i != number - 1) {
                 list.add(OutputToken(tempFiles[i] ?: throw FatalError()))
             }
             val newCommand = CommandRegistry.getCommand(list[0].value)

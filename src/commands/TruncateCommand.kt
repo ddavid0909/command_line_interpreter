@@ -7,21 +7,23 @@ import parser.LiteralTerminal
 import parser.Terminal
 import java.io.File
 
-class TruncateCommand : Command(){
+class TruncateCommand : Command() {
     override fun invoke() {
         val fileName = this.commandInput.getArgument()
         File(fileName).writeText("")
     }
 
     override fun parseInput(input: List<Token>) {
-        var _input : Terminal? = null
+        var _input: Terminal? = null
 
         for (token in input) {
-            when(token) {
+            when (token) {
                 is AppendOutputToken -> throw PresentOutputException()
                 is CommandToken -> continue
                 is InputToken -> throw PresentInputException()
-                is NonQuotedToken -> _input = if (_input == null) LiteralTerminal(token.value) else throw MultipleInputException()
+                is NonQuotedToken -> _input =
+                    if (_input == null) LiteralTerminal(token.value) else throw MultipleInputException()
+
                 is OptionToken -> throw PresentOptionException()
                 is OutputToken -> throw PresentOutputException()
                 is PipelineToken -> continue

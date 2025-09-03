@@ -1,9 +1,11 @@
 package commands
 
-import lexer.*
-import parser.*
-import exceptions.syntax.*
 import commands.output.CommandOutputProvider
+import exceptions.syntax.*
+import lexer.*
+import parser.AppendOutputTerminal
+import parser.OutputTerminal
+import parser.Terminal
 import java.time.LocalDate
 
 class DateCommand : Command() {
@@ -12,16 +14,20 @@ class DateCommand : Command() {
     }
 
     override fun parseInput(input: List<Token>) {
-        var _output : Terminal? = null
+        var _output: Terminal? = null
 
         for (token in input) {
-            when(token) {
-                is AppendOutputToken -> _output = if (_output == null) AppendOutputTerminal(token.value) else throw MultipleOutputException()
+            when (token) {
+                is AppendOutputToken -> _output =
+                    if (_output == null) AppendOutputTerminal(token.value) else throw MultipleOutputException()
+
                 is CommandToken -> continue
                 is InputToken -> throw PresentInputException()
                 is NonQuotedToken -> throw PresentNonQuotedException()
                 is OptionToken -> throw PresentOptionException()
-                is OutputToken -> _output = if (_output == null) OutputTerminal(token.value) else throw MultipleOutputException()
+                is OutputToken -> _output =
+                    if (_output == null) OutputTerminal(token.value) else throw MultipleOutputException()
+
                 is PipelineToken -> continue
                 is QuotedToken -> throw PresentQuotedException()
             }

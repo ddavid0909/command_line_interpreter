@@ -1,7 +1,7 @@
 import input.InputManager
 
 fun main() {
-    while(true) {
+    while (true) {
         try {
             val inputManager = InputManager
             inputManager.acceptInput()

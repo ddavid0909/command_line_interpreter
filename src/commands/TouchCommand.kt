@@ -15,14 +15,16 @@ class TouchCommand : Command() {
     }
 
     override fun parseInput(input: List<Token>) {
-        var _input : Terminal? = null
+        var _input: Terminal? = null
 
         for (token in input) {
-            when(token) {
+            when (token) {
                 is AppendOutputToken -> throw PresentOutputException()
                 is CommandToken -> continue
                 is InputToken -> throw PresentInputException()
-                is NonQuotedToken -> _input = if (_input == null) LiteralTerminal(token.value) else throw MultipleInputException()
+                is NonQuotedToken -> _input =
+                    if (_input == null) LiteralTerminal(token.value) else throw MultipleInputException()
+
                 is OptionToken -> throw PresentOptionException()
                 is OutputToken -> throw PresentOutputException()
                 is PipelineToken -> continue

@@ -1,7 +1,7 @@
-command -opt -opt input >input.txt <<appendOutput.txt <output.txt "argument"
+command -opt -opt input <input.txt >>appendOutput.txt >output.txt "argument"
 Command, Option, Option, NonQuoted, Input, Append Output, Output, Quoted
 
-command -opt input | command <<appendOutput.txt <output.txt "argument"
+command -opt input | command >>appendOutput.txt >output.txt "argument"
 Command, Option, NonQuoted, Pipeline, Command, Append Output, Output, Quoted
 
 command -opt -opt input | command | command
@@ -10,10 +10,10 @@ Command, Option, Option, NonQuoted, Pipeline, Command, Pipeline, Command
 command -opt |command
 Command, Option, Pipeline, Command
 
-command   input    >input.txt | command <output.txt
+command   input    <input.txt | command >output.txt
 Command, NonQuoted, Input, Pipeline, Command, Output
 
-command -opt input -opt >input.txt | command | command | command
+command -opt input -opt <input.txt | command | command | command
 Command, Option, NonQuoted, Option, Input, Pipeline, Command, Pipeline, Command, Pipeline, Command
 
 command command
@@ -21,3 +21,9 @@ Command, NonQuoted
 
 command -opt | command -opt | command | command -opt input
 Command, Option, Pipeline, Command, Option, Pipeline, Command, Pipeline, Command, Option, NonQuoted
+
+
+
+
+command -opt -opt | command |
+Command, Option, Option, Pipeline, Command, Pipeline
